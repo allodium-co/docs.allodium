@@ -15,6 +15,33 @@ that actually answers queries.
 
 ## How a query really runs
 
+```mermaid
+flowchart LR
+    User[You / BI tool]
+
+    subgraph CP["Control plane"]
+        Dispatcher["Desired-state dispatcher"]
+        Portal["Workspace portal SQL editor<br/>(convenience path only)"]
+    end
+
+    subgraph DP["Your data plane"]
+        Agent["Agent"]
+        Trino["Trino / Spark"]
+        Catalog["Catalog (Polaris)"]
+        Storage[("Object storage")]
+    end
+
+    User -->|"query, direct"| Trino
+    User -.->|"or: SQL editor"| Portal
+    Portal -.->|"proxied query"| Trino
+
+    Dispatcher -->|"desired compute shape"| Agent
+    Agent -->|"status + usage"| Dispatcher
+    Agent --> Trino
+    Trino --> Catalog
+    Trino --> Storage
+```
+
 A query does not route through the control plane. A user or BI tool connects
 directly to Trino running in your data plane, through a per-workspace
 address exposed from your own cluster; Trino authenticates that connection
