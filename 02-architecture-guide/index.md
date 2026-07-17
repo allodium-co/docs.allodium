@@ -1,35 +1,43 @@
 ---
 title: Architecture Guide
-description: How ingestion, the lakehouse, catalog, and governance layers fit together.
+description: The control plane and data plane split, and the trust boundary between them.
 order: 2
 ---
 
 # Architecture Guide
 
-Allodium is built around a clean split between a **control plane** that
-orchestrates and a **data plane** that stores and computes. This section
-explains how the major layers — ingestion, the lakehouse, the catalog, and
-governance — relate to each other, so you can reason about where your data is,
-who can touch it, and how a query flows through the system.
+Allodium is two cooperating systems: a **control plane** that orchestrates
+compute, and a **data plane** — your own Kubernetes cluster and your own
+object storage — where your data actually lives, where your catalog lives,
+and where queries actually run.
 
 ## The layers at a glance
 
-- **Ingestion** brings data in, whether streamed continuously or loaded in
-  batches, and lands it in open table formats.
-- **The lakehouse** is the storage foundation: columnar files in your own object
-  storage, described by open table metadata, queryable by multiple engines.
-- **The catalog** is the map — the namespaces, tables, schemas, and versions
-  that make the raw storage discoverable and governable.
-- **Governance** wraps every layer: identity, access policy, and audit apply
-  uniformly whether a user is browsing the catalog or running a query.
+- **Storage and catalog, entirely in your data plane.** Your data sits in
+  your object storage as Iceberg tables, described by a catalog (Apache
+  Polaris) that also runs in your cluster. Allodium provisions it; Allodium
+  does not hold it.
+- **Compute, orchestrated by the control plane, run by your data plane.**
+  You declare a Trino warehouse or Spark cluster; the control plane turns
+  that into a compute shape and pushes it to an agent running in your
+  cluster, which reconciles real Trino and Spark deployments against it.
+- **Governance, split by what it governs.** Who can create a workspace or
+  approve a tenant is a control-plane concern. Who can read a given table is
+  enforced entirely in the data plane, against your catalog, at query time.
 
-## Why the split matters
+## The trust boundary
 
-Because storage and compute live in your data plane, Allodium can add
-orchestration, discovery, and governance on top without becoming a place your
-data has to pass through. The control plane knows *about* your tables; it does
-not hold them. That boundary is the single most important thing to understand
-before reading the rest of this guide.
+This is the single most important thing to understand about the system: the
+control plane and the agent in your cluster exchange exactly one kind of
+message — a **desired compute shape** going down (how big a Trino warehouse,
+how many Spark executors) and **status plus resource usage** coming back up.
+Nothing else crosses that boundary. Query text, query results, table and
+column metadata, catalog grants, and storage credentials are never part of
+that exchange — this isn't a policy choice made at the UI layer, it's
+enforced by the shared schema the two sides speak: a compute-shape message
+has no field to put any of that in.
 
-Start with the [platform overview](01-platform-overview.md), then dig into the
-[ingestion](ingestion/index.md) sub-section for how data arrives.
+Start with the [platform overview](/docs/architecture-guide/platform-overview)
+for how the two planes fit together, then read
+[compute orchestration](/docs/architecture-guide/compute-orchestration) for
+how a declared warehouse becomes a running Trino cluster.
