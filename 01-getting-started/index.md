@@ -38,7 +38,10 @@ and outbound network access from that cluster to the Allodium control plane
 endpoint (its address is generated per workspace — see
 [Deploy the Data Plane](/docs/getting-started/deploy-the-data-plane) for the
 exact egress rule). You'll also need an approved Allodium account — access requests are reviewed
-before a tenant and login are created.
+before a tenant and login are created. Once the workspace is running, your
+users' browsers query the data plane directly, so check
+[Network and Browser Requirements](/docs/getting-started/network-and-browser-requirements)
+before rolling it out to them.
 
 Work through the pages in order — each one assumes the previous step
 succeeded.
