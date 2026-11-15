@@ -11,8 +11,8 @@ Users, service accounts and group membership all stay in your identity
 provider. Allodium doesn't keep a second user directory. In the workspace you
 decide what each group may do.
 
-Only members of the [catalog admin group](02-catalog-admin-group.md) can grant
-access.
+Members of the [catalog admin group](02-catalog-admin-group.md) manage this
+access, and only they can add groups.
 
 ## How access fits together
 
@@ -24,22 +24,23 @@ access.
 - Giving a group a catalog role gives every member of the group that role's
   grants.
 
-A user's access is the sum of the roles held by all of their groups. A user in
-no group with a role has no access.
+A user's access to the catalog is the sum of the roles held by all of their
+groups. A user in no group with a role has no access to the catalog.
 
 ## Give a group access
 
 1. **Add the group.** Open the **Groups** page and choose **New group**.
    Enter the group's name exactly as your identity provider sends it. You can
    add a group before any of its members has signed in.
-2. **Create a catalog role.** Open the catalog, go to **Roles**, and create a
-   role named after what it allows, for example `analysts_read`.
-3. **Grant privileges to the role.** On the role's page, under **Grant
-   privilege**, choose a resource type, the privilege, and the schema, table
-   or view it applies to. Leave the path blank for a grant on the whole
+2. **Create a catalog role.** Open the catalog, go to **Roles**, choose
+   **New role**, and name it after what it allows, for example
+   `analysts_read`.
+3. **Grant privileges to the role.** On the role's page, choose **Add
+   grant**, then a resource type, the privilege, and the schema, table or
+   view it applies to. Leave the path blank for a grant on the whole
    catalog. Repeat for each privilege.
 4. **Give the role to the group.** On the role's page, under **Groups**,
-   choose **Give a group this role** and pick the group. You can also type a
+   choose **Assign group** and pick the group. You can also type a
    new group's name there, and it's added as in step 1.
 
 The **Groups** page lists each group with the catalog roles it holds. A
