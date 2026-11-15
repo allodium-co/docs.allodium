@@ -1,6 +1,6 @@
 ---
 title: Catalog Admin Group
-description: The identity-provider group that administers a workspace's catalog from the moment the data plane is installed.
+description: The identity-provider group that administers a workspace's catalog from the moment you install the data plane.
 order: 2
 ---
 
@@ -9,7 +9,7 @@ order: 2
 Access to the catalog is decided by grants, and a new user has none. Someone
 has to be able to create the first schemas and grant access to everyone else.
 That's the **catalog admin group**: a group in your identity provider that you
-name when you create the workspace.
+name when you deploy the data plane.
 
 ## What its members can do
 
@@ -43,10 +43,14 @@ or remove from the group gets the change the next time they sign in.
 
 ## How it is applied
 
-You enter the group when you create the workspace. It is written into the
-workspace's Terraform variables as `catalog_admin_group`, and the data plane
-module sets it up when it installs the catalog. Your data plane, not
-Allodium, holds the catalog and its grants.
+You set the group as `catalog_admin_group` in your own Terraform
+configuration for the data plane module, not in the file Allodium issues.
+When the module installs the catalog, it gives that group the catalog admin
+role. The choice, the catalog and its grants all stay in your data plane:
+Allodium never stores or sees who your catalog admins are.
+
+After a first install, the group's members can take up to five minutes to
+get access.
 
 To change the group, update `catalog_admin_group` and apply the module again.
 The new group becomes a catalog admin. The previous group keeps its access

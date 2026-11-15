@@ -23,9 +23,6 @@ From the accounts portal, create a new workspace. It asks for:
 - **A name.**
 - **A data-plane domain**: the DNS zone your users' browsers reach the data
   plane under. See [Network and Browser Requirements](/docs/getting-started/network-and-browser-requirements).
-- **A catalog admin group**: an existing group in your identity provider whose
-  members administer the workspace's catalog. See
-  [Catalog Admin Group](/docs/governance-and-security/catalog-admin-group).
 
 There's no cloud provider or region picker, because Allodium doesn't provision
 anything into your infrastructure on your behalf.
