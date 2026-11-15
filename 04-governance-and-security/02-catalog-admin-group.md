@@ -19,7 +19,9 @@ can:
 - browse every schema, table and view in it;
 - read and write the data in every table;
 - create and drop schemas and tables;
-- create catalog roles and manage their grants.
+- create catalog roles and manage their grants;
+- add groups from your identity provider and give them catalog roles. See
+  [grant groups access](03-grant-groups-access.md).
 
 That is broad access, so keep the group small: the people responsible for the
 catalog, not everyone who analyzes data. Give analysts their own groups with
