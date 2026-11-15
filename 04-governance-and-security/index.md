@@ -28,5 +28,7 @@ are enforced by architecture rather than by policy alone. A data plane pinned to
 a region keeps its data there; governance policy then layers per-object access
 control on top.
 
-Read [identity and access](01-identity-and-access.md) for the policy model, then
-the [audit](audit/index.md) sub-section for how activity is recorded.
+Read [identity and access](01-identity-and-access.md) for the policy model,
+[catalog admin group](02-catalog-admin-group.md) for who administers a new
+workspace's catalog, then the [audit](audit/index.md) sub-section for how
+activity is recorded.
