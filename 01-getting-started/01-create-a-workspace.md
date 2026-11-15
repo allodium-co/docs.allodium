@@ -18,9 +18,14 @@ created for you.
 
 ## Create the workspace
 
-From the accounts portal, create a new workspace and give it a name. That's
-the only input required — there's no cloud provider or region picker, because
-Allodium doesn't provision anything into your infrastructure on your behalf.
+From the accounts portal, create a new workspace. It asks for:
+
+- **A name.**
+- **A data-plane domain**: the DNS zone your users' browsers reach the data
+  plane under. See [Network and Browser Requirements](/docs/getting-started/network-and-browser-requirements).
+
+There's no cloud provider or region picker, because Allodium doesn't provision
+anything into your infrastructure on your behalf.
 
 Creating the workspace generates:
 

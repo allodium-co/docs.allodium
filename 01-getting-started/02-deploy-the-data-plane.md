@@ -36,6 +36,10 @@ Run the published Terraform module against your cluster, supplying:
   object store credentials.
 - `control_plane_cidrs` — the CIDR the control-plane endpoint resolves to,
   so the default-deny egress policy admits the connection.
+- `catalog_admin_group` — the group in your identity provider that
+  administers the catalog. You choose it here, in your own configuration;
+  Allodium never stores it. See
+  [Catalog Admin Group](/docs/governance-and-security/catalog-admin-group).
 
 The module installs two Helm releases into your cluster: one for storage
 (Postgres) and one for compute (Polaris, Trino, Spark, and the agent itself).
