@@ -17,12 +17,12 @@ Members of the catalog admin group administer the workspace's catalog. They
 can:
 
 - browse every schema, table and view in it;
+- read and write the data in every table;
 - create and drop schemas and tables;
-- grant and revoke access to other groups.
+- create catalog roles and manage their grants.
 
-Being a catalog admin is not meant as standing access to all data. It exists
-so the catalog can be set up and governed. For sensitive data, keep the group
-small, and give the people who only analyze data their own groups with
+That is broad access, so keep the group small: the people responsible for the
+catalog, not everyone who analyzes data. Give analysts their own groups with
 narrower grants.
 
 ## Choosing the group
