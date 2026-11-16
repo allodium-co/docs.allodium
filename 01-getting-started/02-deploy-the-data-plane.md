@@ -15,15 +15,14 @@ reaches into your infrastructure to do this for you.
 
 - A Kubernetes cluster you administer, with a default `StorageClass` for
   persistent volumes.
-- Credentials for an S3-compatible object store (endpoint, access key,
-  secret key, region) — any provider that speaks the S3 API works, this is
-  not tied to a specific cloud.
-- Outbound network access from that cluster to the control-plane endpoint
-  from the previous step. The data plane runs a default-deny egress network
-  policy, so you must pass the CIDR range the control-plane endpoint
-  resolves to — without it, the agent is silently unable to reach the
-  control plane.
-- The workspace ID, enrollment token, and control-plane endpoint from
+- An S3-compatible object store with an existing bucket for this data plane,
+  and an access key for it. Any provider that speaks the S3 API works; this
+  is not tied to a specific cloud.
+- A certificate for `*.<data-plane domain>`: an existing TLS Secret in the
+  cluster, or a cert-manager issuer that can issue one.
+- Outbound network access from the cluster to the control plane, your object
+  store and your Kubernetes API server.
+- The `allodium-<workspace id>.auto.tfvars` file from
   [Create a Workspace](/docs/getting-started/create-a-workspace).
 
 ## Deploy
@@ -38,7 +37,7 @@ settings. Put it next to your Terraform configuration unchanged. Terraform
 loads it automatically.
 
 **Your own tfvars.** Set these yourself, for example in `terraform.tfvars`.
-Only you know them, and the issued file lists them in a comment at the end:
+The issued file lists them in a comment at the end:
 
 | Input | What it is |
 |---|---|
@@ -48,13 +47,13 @@ Only you know them, and the issued file lists them in a comment at the end:
 | `postgres_password` | The admin password for the catalog's Postgres. |
 | `s3_endpoint`, `s3_bucket`, `s3_access_key`, `s3_secret_key` | Your object store and an existing bucket for this data plane's tables. `s3_region` is optional and defaults to `us-east-1`. |
 | `object_store_cidrs` | The CIDRs `s3_endpoint` resolves to. |
-| `control_plane_cidrs` | The CIDRs the control-plane endpoint and the identity provider's key endpoint resolve to. |
+| `control_plane_cidrs` | The CIDRs that `control_plane_endpoint` and `jwks_uri` in the issued file resolve to. |
 | `api_server_cidrs` | Your cluster's Kubernetes API server endpoints, from `kubectl get endpoints kubernetes -n default`. |
 
 The data plane denies outbound traffic by default, and network policies match
-addresses, not host names. So the three CIDR inputs are the only places the
-data plane can reach: your object store, the control plane, and your
-Kubernetes API server.
+addresses, not host names. So outside the cluster, the data plane can reach
+only the addresses in the three CIDR inputs: your object store, the control
+plane, and your Kubernetes API server.
 
 The module installs two Helm releases into your cluster: one for storage
 (Postgres) and one for compute (Polaris, Trino, Spark, and the agent itself).
