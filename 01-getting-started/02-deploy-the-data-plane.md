@@ -28,18 +28,33 @@ reaches into your infrastructure to do this for you.
 
 ## Deploy
 
-Run the published Terraform module against your cluster, supplying:
+Run the published Terraform module against your cluster. Its inputs come from
+two places.
 
-- `control_plane_endpoint`, `workspace_id`, `enrollment_token` — from the
-  workspace you just created.
-- `s3_endpoint`, `s3_access_key`, `s3_secret_key`, `s3_region` — your own
-  object store credentials.
-- `control_plane_cidrs` — the CIDR the control-plane endpoint resolves to,
-  so the default-deny egress policy admits the connection.
-- `catalog_admin_group` — the group in your identity provider that
-  administers the catalog. You choose it here, in your own configuration;
-  Allodium never stores it. See
-  [Catalog Admin Group](/docs/governance-and-security/catalog-admin-group).
+**The issued file.** The `allodium-<workspace id>.auto.tfvars` file you
+downloaded when you created the workspace sets the workspace ID, enrollment
+token, control-plane endpoint, data-plane domain, workspace origin and token
+settings. Put it next to your Terraform configuration unchanged. Terraform
+loads it automatically.
+
+**Your own tfvars.** Set these yourself, for example in `terraform.tfvars`.
+Only you know them, and the issued file lists them in a comment at the end:
+
+| Input | What it is |
+|---|---|
+| `tls` | The certificate for `*.<data-plane domain>`: an existing TLS Secret (`{ secret_name = "lakehouse-tls" }`) or a cert-manager issuer. |
+| `catalog_admin_group` | The group in your identity provider that administers the catalog. Allodium never stores it. See [Catalog Admin Group](/docs/governance-and-security/catalog-admin-group). |
+| `chart_version` | The data-plane release to install. |
+| `postgres_password` | The admin password for the catalog's Postgres. |
+| `s3_endpoint`, `s3_bucket`, `s3_access_key`, `s3_secret_key` | Your object store and an existing bucket for this data plane's tables. `s3_region` is optional and defaults to `us-east-1`. |
+| `object_store_cidrs` | The CIDRs `s3_endpoint` resolves to. |
+| `control_plane_cidrs` | The CIDRs the control-plane endpoint and the identity provider's key endpoint resolve to. |
+| `api_server_cidrs` | Your cluster's Kubernetes API server endpoints, from `kubectl get endpoints kubernetes -n default`. |
+
+The data plane denies outbound traffic by default, and network policies match
+addresses, not host names. So the three CIDR inputs are the only places the
+data plane can reach: your object store, the control plane, and your
+Kubernetes API server.
 
 The module installs two Helm releases into your cluster: one for storage
 (Postgres) and one for compute (Polaris, Trino, Spark, and the agent itself).
