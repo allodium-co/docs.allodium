@@ -31,4 +31,5 @@ New principals start with no access. You grant capabilities explicitly, ideally
 to groups, and lean on short-lived credentials for automation. Because the same
 policy engine governs every access path, there's no back door that bypasses it —
 a principal that can't read a table in the console can't read it through the API
-either.
+either. Spark is the exception for now: its code reads storage directly, so
+grants don't limit it. See [SQL access](04-sql-access.md#spark).

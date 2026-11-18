@@ -31,5 +31,6 @@ control on top.
 Read [identity and access](01-identity-and-access.md) for the policy model,
 [catalog admin group](02-catalog-admin-group.md) for who administers a new
 workspace's catalog, [grant groups access](03-grant-groups-access.md) for how
-they give your identity provider's groups access to it, then the
-[audit](audit/index.md) sub-section for how activity is recorded.
+they give your identity provider's groups access to it,
+[SQL access](04-sql-access.md) for how those grants apply to each query, then
+the [audit](audit/index.md) sub-section for how activity is recorded.
