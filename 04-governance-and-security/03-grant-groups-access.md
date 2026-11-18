@@ -63,6 +63,52 @@ A user sees a catalog only if one of their groups may list its schemas. A
 group whose grants cover a single schema can use it, but its members won't
 find the catalog in the list without `NAMESPACE_LIST`.
 
+### Example: one table
+
+For a group `finance` that should read only the `orders` table in the `sales`
+schema, create a role `orders_read` with these grants:
+
+| Privilege                   | On                    | What it allows                                     |
+| --------------------------- | --------------------- | -------------------------------------------------- |
+| `TABLE_READ_DATA`           | the table `orders`    | Querying the table.                                |
+| `NAMESPACE_LIST`            | the catalog           | Seeing the catalog and its schemas (`SHOW SCHEMAS`). |
+| `NAMESPACE_READ_PROPERTIES` | the schema `sales`    | Opening the schema (needed for `SHOW TABLES`).     |
+| `TABLE_LIST`                | the schema `sales`    | Seeing the schema's tables (`SHOW TABLES`).        |
+
+Then give `orders_read` to `finance`.
+
+Its members can now browse to `sales.orders` and query it. In the SQL
+editor, the catalog is `lakehouse`:
+
+```sql
+SHOW SCHEMAS FROM lakehouse;
+SHOW TABLES FROM lakehouse.sales;
+SELECT * FROM lakehouse.sales.orders LIMIT 10;
+```
+
+`TABLE_LIST` shows the names of every table in `sales`, including tables the
+group can't read. A query on any of those other tables is denied.
+
+`TABLE_READ_DATA` is the only grant needed to query the table. The other
+three are for finding it. Without them, members can still query
+`lakehouse.sales.orders` by its full name, but `SHOW SCHEMAS`, `SHOW TABLES`
+and queries on `information_schema` fail, and the catalog isn't in their
+list.
+
+A listing fails as a whole. If the catalog refuses part of it, the result
+isn't trimmed to what the user may see; the statement fails. So a query on
+`information_schema` that reaches a schema the group can't list fails too.
+To let a group browse every schema, give it the listing grants on the
+catalog, as in the analysts example.
+
+### Metadata-only access
+
+`TABLE_READ_PROPERTIES` without `TABLE_READ_DATA` lets members open a table
+and see its columns, but not query it. A SQL query on the table is denied.
+To let a group query a table, grant `TABLE_READ_DATA`.
+
+See [SQL access](04-sql-access.md) for how these grants apply to each query.
+
 ## Group names
 
 Group names follow the same rules as the catalog admin group: up to 64
